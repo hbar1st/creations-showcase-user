@@ -52,7 +52,7 @@ form > div {
   grid-template-rows: auto;
   max-width: clamp(350px, 30em, 500px);
   row-gap: 1em;
-  color: black;
+  
 
   > h2 {
     grid-column: 1 / -1;
