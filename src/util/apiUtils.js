@@ -12,10 +12,18 @@ const CS_API_URL_PROD = "https://civic-janenna-hbar1stdev-7cb31133.koyeb.app";
 export const CS_API_URL =
   mode == "development" ? CS_API_URL_DEV : CS_API_URL_PROD;
 
-export const getHeader = (token) => ({
-  "Content-Type": "application/x-www-form-urlencoded",
-  Authorization: `Bearer ${token}`,
-});
+export const getHeader = (token) => {
+  if (token) {
+    return {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${token}`,
+    };
+  } else {
+    return {
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
+  }
+};
 
 export function useAuthorizeToken() {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -73,3 +81,62 @@ export const verifyToken = async () => {
     return false;
   }
 };
+
+export function useGetAPI(route) {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const controller = new AbortController();
+    async function callAPI() {
+      try {
+        setLoading(true);
+        const res = await fetch(`${CS_API_URL}${route}`, {
+          method: "GET",
+          headers: getHeader(getToken()),
+          signal: controller.signal,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          console.log("this is the data the loader should show: ", data);
+          setData(data);
+        } else {
+          throw new Error(
+            "Internal error. Failed to contact the server. Contact support if the issue persists."
+          );
+        }
+      } catch (error) {
+        if (error.name === "AbortError") {
+          console.log("Aborted duplicate call to useGetAPI");
+          return;
+        }
+        console.log(error, error.stack);
+        throw new Error(
+          "Internal error. Failed to complete the request. Contact support if the issue persists"
+        );
+      }
+    }
+    if (route) {
+      try {
+        callAPI();
+      } catch (error) {
+        setError(error);
+        navigate("/error", {
+          state: error,
+          viewTransition: true,
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    return () => controller.abort(); //clean up if needed
+  }, [location.pathname, navigate, route]);
+
+  return { data, setData, error, loading };
+}

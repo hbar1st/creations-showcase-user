@@ -1,4 +1,4 @@
-import "../styles/App.css";
+import styles from "../styles/Projects.module.css";
 import Navbar from "./Navbar";
 import { useState, useEffect, Suspense } from "react";
 import { Outlet } from "react-router";
@@ -53,7 +53,7 @@ function App() {
   return (
     <>
       <Navbar props={navProps} />
-      <main>
+      <main className={styles.main}>
         <Outlet context={{ client: CS_CLIENT }} />
         {signupFormShown && (
           <Signup

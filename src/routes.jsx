@@ -1,6 +1,7 @@
 import App from "./components/App";
 import ErrorPage from "./components/ErrorPage";
 import LandingPage from "./components/LandingPage";
+import Showcase from "./components/Showcase";
 
 const routes = [
   {
@@ -11,6 +12,10 @@ const routes = [
       {
         index: true,
         element: <LandingPage />,
+      },
+      {
+        path: "showcase",
+        element: <Showcase />
       }
     ]
   },
