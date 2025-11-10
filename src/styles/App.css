@@ -39,6 +39,7 @@ nav {
 
   > button:last-of-type {
     background-color: #ba54f3;
+    color: white;
     text-shadow: 1px 0px 1px #2c1045, 0px 1px 1px #dcb5ff;
   }
 }
