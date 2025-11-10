@@ -25,7 +25,9 @@ export const getHeader = (token) => {
   }
 };
 
-
+// the route it the path we want to invoke in the target API
+// if call fails with 401 (unauthorized), returns an object containing statusCode, state value which is location.pathname, and navigation path
+// otherwise for validation errors or success results, it returns the json we got
 export async function callAPI(action = "GET", route, formData = null) {
   if (!getToken()) {
     console.trace("checking up on authorization: ", getToken());

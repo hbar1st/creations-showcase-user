@@ -1,34 +1,41 @@
-import { useNavigate, Link } from "react-router";
+import { Link } from "react-router";
 import { useState } from "react";
 
 import styles from "../styles/Projects.module.css";
 
 // icon imports
 import heartIcon from "../assets/heart.svg";
-import redHeartIcon from "../assets/red-heart.svg"
+import redHeartIcon from "../assets/red-heart.svg";
 import commentIcon from "../assets/chat_bubble.svg";
 import codeIcon from "../assets/code-link.svg";
 import liveLinkIcon from "../assets/preview.svg";
 
-export default function ProjectCardLeft({ project, isAuthorized, handleLikeButton }) {
-
+export default function ProjectCardLeft({
+  project,
+  isAuthorized,
+  handleLikeButton,
+}) {
   const [likes, setLikes] = useState({
-    count: project._count.likes, liked: isAuthorized && Boolean(project.likes.find(el => {
-      el.userid === isAuthorized
-    }))
+    count: project._count.likes,
+    liked:
+      isAuthorized &&
+      project.likes.reduce((acc, el) => {
+       return acc || (el.userId === isAuthorized);
+      }, false),
   });
 
   function handleLikeButtonLocal(e) {
-    setLikes(prev => {
-      if (prev.liked) {
-        return { count: prev.count--, liked: !prev.liked }
-      } else {
-        return { count: prev.count++, liked: !prev.liked }
-      }
-    });
-    handleLikeButton(e)
+    console.log("likes count:", likes.count);
+    let newObj = {};
+    if (likes.liked) {
+      newObj = { count: likes.count - 1, liked: !likes.liked };
+    } else {
+      newObj = { count: likes.count + 1, liked: !likes.liked };
+    }
+    setLikes(newObj);
+    handleLikeButton(e, newObj);
   }
-  
+
   return (
     <div className={styles.projectCardLeft}>
       <p>{project.title}</p>
@@ -57,31 +64,51 @@ export default function ProjectCardLeft({ project, isAuthorized, handleLikeButto
       ) : (
         "No Featured Image"
       )}
-      <p>
+      <div>
         {isAuthorized ? (
-
-          <button className={styles.projectSocials} onClick={handleLikeButtonLocal} data-pid={project.id} data-userid={isAuthorized} data-liked={`${likes.liked}`}>
-            <img src={likes.liked ? redHeartIcon : heartIcon} alt="likes" /> {likes.count}
-          </button>
+          <p>
+            <button
+              className={styles.projectSocials}
+              onClick={handleLikeButtonLocal}
+              data-pid={project.id}
+              data-userid={isAuthorized}
+              data-liked={`${likes.liked}`}
+            >
+              <img src={likes.liked ? redHeartIcon : heartIcon} alt="likes" />{" "}
+            </button>
+            {likes.count}
+          </p>
         ) : (
-          <span className={styles.projectSocials}>
-            <img src={heartIcon} alt="likes" /> {project._count.likes}
-          </span>
+          <p>
+            <span className={styles.projectSocials}>
+              <img src={heartIcon} alt="likes" />
+            </span>
+            {project._count.likes}
+          </p>
         )}
-        <span className={styles.projectSocials}>
-          <img src={commentIcon} alt="comments" /> {project._count.comments}
-        </span>
+        <p>
+          <span className={styles.projectSocials}>
+            <img src={commentIcon} alt="comments" />
+          </span>
+          {project._count.comments}
+        </p>
         {project["repo_link"] && (
-          <Link to={project["repo_link"]} className={styles.projectSocials}>
-            <img src={codeIcon} alt="code" /> Repo
-          </Link>
+          <p>
+            <Link to={project["repo_link"]} className={styles.projectSocials}>
+              <img src={codeIcon} alt="code" />
+            </Link>
+            Repo
+          </p>
         )}
         {project["live_link"] && (
-          <Link to={project["live_link"]} className={styles.projectSocials}>
-            <img src={liveLinkIcon} alt="code" /> Live
-          </Link>
+          <p>
+            <Link to={project["live_link"]} className={styles.projectSocials}>
+              <img src={liveLinkIcon} alt="code" />
+            </Link>
+            Live
+          </p>
         )}
-      </p>
+      </div>
     </div>
   );
 }

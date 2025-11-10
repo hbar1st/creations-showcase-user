@@ -1,7 +1,7 @@
 import "../styles/App.css";
 import { setToken } from "../util/storage";
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 
 function Login({
   userDetails,
@@ -19,7 +19,6 @@ function Login({
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     if (progressShown) {
@@ -77,16 +76,12 @@ function Login({
       if (res.ok) {
         // get the data which contains the userid
         const data = await res.json();
-        setIsAuthorized(data.userid)
         console.log("In Login component, res status is: ", res.status);
         const token = res.headers.get("Authorization").split(" ")[1];
         // grab the jwt token and store it!
         setToken(token);
-        // todo show the showcase page
-        navigate(location.state ?? "/showcase", {
-          state: null,
-          viewTransition: true,
-        });
+        setIsAuthorized(data.userid);
+        loginRef.current.close(); //close the dialog
       } else {
         // show these errors somewhere
         const data = await res.json();

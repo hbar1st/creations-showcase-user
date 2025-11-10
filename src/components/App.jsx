@@ -60,7 +60,7 @@ function App() {
     <>
       {isAuthorized ? <AuthorNavbar setIsAuthorized={setIsAuthorized} /> : <Navbar props={navProps} />}
       <main className={styles.main}>
-        <Outlet context={{ client: CS_CLIENT }} />
+        <Outlet context={{ client: CS_CLIENT, authObj: {isAuthorized,authError,authLoading} }} />
         {signupFormShown && (
           <Signup
             userDetails={userDetails}

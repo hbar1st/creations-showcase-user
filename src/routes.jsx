@@ -16,13 +16,22 @@ const routes = [
       },
       {
         path: "showcase",
-        element: <Showcase />
+        element: <Showcase />,
       },
       {
         path: "account",
-        element: <Account />
+        element: <Account />,
       },
-    ]
+      {
+        path: "/login",
+        element: <App />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/error",
+        element: <ErrorPage />,
+      },
+    ],
   },
 ];
 

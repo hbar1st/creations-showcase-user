@@ -8,6 +8,9 @@
 
   & * {    
     box-sizing: border-box;
+  }
+
+  & *:not(dialog) {
     margin: 0;
   }
 
@@ -91,6 +94,8 @@
   align-items: center;
 
   > p:first-of-type {
+    border: 3px double black;
+    margin: 1rem 1rem 0rem 1rem;
     justify-self: stretch;
     grid-area: title;
     color: black;
@@ -101,7 +106,7 @@
     background-color: white;
   }
 
-  > p:last-of-type {
+  > div:last-of-type {
     grid-area: socials;
     display: flex;
     flex-direction: column;
@@ -110,7 +115,9 @@
     align-items: center;
     font-size: 10px;
     width: 60px;
-    aspect-ratio: 1;
+    aspect-ratio: 1;    
+    align-self: stretch;
+    background-color: #eadbff;
   }
 }
 
@@ -126,6 +133,10 @@
   min-width: 50px;
   max-width: 50px;
   min-height: 50px;
+      justify-content: center;
+    padding: 1.5ch;
+    border-radius: 50%;
+    background-color: #2f13130a;
 
   > img {
     max-width: 50px;
