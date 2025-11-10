@@ -1,6 +1,7 @@
 import { callAPI, useGetAPI } from "../util/apiUtils";
 import { useNavigate, Link, useOutletContext } from "react-router";
 import ProjectCardLeft from "./ProjectCardLeft";
+import Comments from "./Comments";
 
 import { CS_API_URL, useAuthorizeToken } from "../util/apiUtils";
 import styles from "../styles/Projects.module.css";
@@ -86,6 +87,7 @@ export default function Projects() {
               >
                 <ProjectCardLeft
                   project={project}
+                  key={isAuthorized}
                   isAuthorized={isAuthorized}
                   handleLikeButton={handleLikeButton}
                 />
@@ -100,17 +102,7 @@ export default function Projects() {
                       ? "Comments"
                       : "No Responses Yet"}
                   </p>
-
-                  {project.comments.map((comment) => {
-                    <textarea
-                      disabled
-                      className={styles.comments}
-                      name=""
-                      id=""
-                    >
-                      {comment}
-                    </textarea>;
-                  })}
+                  <Comments project={project} isAuthorized={isAuthorized} />
                 </div>
               </div>
             );

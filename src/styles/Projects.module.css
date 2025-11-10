@@ -55,6 +55,7 @@
 
   & a {
     justify-self: stretch;
+    margin-top: 1rem;
   }
 }
 
@@ -118,6 +119,10 @@
     aspect-ratio: 1;    
     align-self: stretch;
     background-color: #eadbff;
+  }
+
+  > img {
+    margin: 1rem 0;
   }
 }
 
