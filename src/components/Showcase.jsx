@@ -1,31 +1,53 @@
 import { useGetAPI } from "../util/apiUtils";
 import { useNavigate, Link } from "react-router";
+import ProjectCardLeft from "./ProjectCardLeft";
 
-import heartIcon from "../assets/heart.svg";
-import commentIcon from "../assets/chat_bubble.svg";
+import { CS_API_URL, useAuthorizeToken } from "../util/apiUtils";
 import styles from "../styles/Projects.module.css";
-import codeIcon from "../assets/code-link.svg";
-import liveLinkIcon from "../assets/preview.svg"
 
 export default function Projects() {
 
+
+    const {
+      isAuthorized,
+      error: authError,
+      loading: authLoading,
+    } = useAuthorizeToken();
+  
+
   let {
     data: projects,
-    errors: getProjectsError,
-    loading: getProjectsLoading,
+    errors: projectsError,
+    loading: projectsLoading,
   } = useGetAPI("/projects");
 
   const navigate = useNavigate();
 
-  if (getProjectsLoading) {
+  function handleLikeButton(e) {
+    e.preventDefault();
+    console.log("You clicked the heart: ", e.currentTarget.getAttribute('data-pid'));
+    console.log("You are: ", e.currentTarget.getAttribute('data-userid'));
+    console.log("is heart currently liked? ", e.currentTarget.getAttribute('data-liked'))
+    // TODO call the API and actually set or unset the like as required
+  }
+
+  if (projectsLoading || authLoading ) {
     return <p>Loading...</p>;
   }
-  if (getProjectsError) {
+  if (projectsError) {
     navigate("/error", {
-      state: getProjectsError,
+      state: projectsError,
       viewTransition: true,
     });
   }
+
+    if (authError) {
+      navigate("/error", {
+        state: authError,
+        viewTransition: true,
+      });
+    }
+  
   if (projects) {
     return (
       <>
@@ -38,57 +60,7 @@ export default function Projects() {
                 data_id={project.id}
                 className={styles.projectCard}
               >
-                <div className={styles.projectCardLeft}>
-                  <p>{project.title}</p>
-                  {project["live_link"] ? (
-                    <Link to={project["live_link"]}>
-                      {project.images.length > 0 ? (
-                        <img
-                          data_id={project.id}
-                          className={styles.projectImage}
-                          data_type="updateImage"
-                          src={project.images[0].url}
-                          alt="featured image"
-                        />
-                      ) : (
-                        "No Featured Image"
-                      )}
-                    </Link>
-                  ) : project.images.length > 0 ? (
-                    <img
-                      data_id={project.id}
-                      className={styles.projectImage}
-                      data_type="updateImage"
-                      src={project.images[0].url}
-                      alt="featured image"
-                    />
-                  ) : (
-                    "No Featured Image"
-                  )}
-                  <p>
-                    <span className={styles.projectSocials}>
-                      <img src={heartIcon} alt="likes" /> {project._count.likes}
-                    </span>{" "}
-                    <span className={styles.projectSocials}>
-                      <img src={commentIcon} alt="comments" />{" "}
-                      {project._count.comments}
-                    </span>{" "}
-                    {project["repo_link"] &&
-                    <Link
-                      to={project["repo_link"]}
-                      className={styles.projectSocials}
-                    >
-                      <img src={codeIcon} alt="code" /> Repo
-                      </Link> }
-                    {project["live_link"] &&
-                      <Link
-                        to={project["live_link"]}
-                        className={styles.projectSocials}
-                      >
-                        <img src={liveLinkIcon} alt="code" /> Live
-                      </Link>}
-                  </p>
-                </div>
+                <ProjectCardLeft project={project} isAuthorized={isAuthorized} handleLikeButton={handleLikeButton} />
                 <div className={styles.projectCardRight}>
                   <p>Authored by {project.author.user.nickname}</p>
                   <div>

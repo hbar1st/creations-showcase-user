@@ -82,11 +82,11 @@ function Burger() {
       <dialog ref={menuRef} className="burger-menu">
         <ul>
           <li>
-            <Link to="/private/projects">Projects</Link>
+            <Link to="/showcase">Showcase</Link>
           </li>
 
           <li>
-            <Link to="/private/account">Account</Link>
+            <Link to="/account">Account</Link>
           </li>
 
           <li>

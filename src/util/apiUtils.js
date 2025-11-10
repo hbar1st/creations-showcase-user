@@ -25,8 +25,50 @@ export const getHeader = (token) => {
   }
 };
 
+
+export async function callAPI(action = "GET", route, formData = null) {
+  if (!getToken()) {
+    console.trace("checking up on authorization: ", getToken());
+    throw new Error("Unexpected error: token is missing");
+  }
+  const requestObj = {
+    method: action,
+    headers: getHeader(getToken()),
+  };
+  if (formData) {
+    requestObj.body = new URLSearchParams(formData);
+  }
+  try {
+    const res = await fetch(`${CS_API_URL}${route}`, requestObj);
+    if (res.status === 401) {
+      console.log("trying to get data but not authorized");
+      clearToken();
+      return {
+        statusCode: res.status,
+        navigate: "/login",
+        state: location.pathname,
+      };
+    } else if (res.ok || res.status === 400) {
+      const data = await res.json();
+      console.log("this is the data the page should show: ", data);
+      return data;
+    } else {
+      throw new Error(
+        "Internal error. Failed to contact the server. Contact support if the issue persists. Status code: " +
+          res.status
+      );
+    }
+  } catch (error) {
+    console.log(error, error.stack);
+    throw new Error(
+      "Internal error. Failed to complete the request. Contact support if the issue persists"
+    );
+  }
+}
+
+
 export function useAuthorizeToken() {
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false); // this is either false or the userid value
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -52,7 +94,7 @@ export function useAuthorizeToken() {
       }
     })();
   }, []);
-  return { isAuthorized, error, loading };
+  return { isAuthorized, setIsAuthorized, error, loading };
 }
 
 export const verifyToken = async () => {
@@ -69,8 +111,9 @@ export const verifyToken = async () => {
         console.log("about to clear the token in apiUtils");
         clearToken();
         return false;
-      } else if (res.ok) {
-        return true;
+      } else if (res.ok) {        
+        const data = await res.json();
+        return data.userid;
       }
     } catch (error) {
       console.log("unexpected error when verifying token");

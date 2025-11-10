@@ -2,6 +2,7 @@ import App from "./components/App";
 import ErrorPage from "./components/ErrorPage";
 import LandingPage from "./components/LandingPage";
 import Showcase from "./components/Showcase";
+import Account from "./components/Account";
 
 const routes = [
   {
@@ -16,7 +17,11 @@ const routes = [
       {
         path: "showcase",
         element: <Showcase />
-      }
+      },
+      {
+        path: "account",
+        element: <Account />
+      },
     ]
   },
 ];

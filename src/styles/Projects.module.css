@@ -1,16 +1,23 @@
 .main {
-  margin-top: 8vh;
+  margin-top: max(8vh,10vh);
   display: grid;
   grid-template-areas:
     "header"
     "projects";
+  justify-items: center;
 
   & * {    
     box-sizing: border-box;
+    margin: 0;
+  }
+
+  h1 {
+    margin-bottom: 1ch;
   }
 }
 
 .projectsSection {
+  min-width: 300px;
   grid-area: projects;
   display: flex;
   flex-flow: wrap;
@@ -19,6 +26,7 @@
   padding: 2ch;
   justify-content: center;
   background: linear-gradient(45deg, #5585f6, transparent);
+  max-width: 100%;
 }
 /*
 .projectCard:hover {
@@ -41,12 +49,16 @@
   > * {
     box-sizing: border-box;
   }
+
+  & a {
+    justify-self: stretch;
+  }
 }
 
 .projectCardRight {
-  min-width: 50%;
-  max-width: 50%;
-  min-height: 100%;
+  min-width: clamp(300px,50%,calc(100dvw - 12ch));
+  max-width: 100%;
+  align-self: stretch;
   padding: 2ch;
   flex: 1;
   row-gap: 1ch;
@@ -65,13 +77,13 @@
   }
 }
 .projectCardLeft {
-  min-width: 50%;
-  max-width: 50%;
-  min-height: 100%;
+  min-width: clamp(300px,50%,calc(100dvw - 12ch));
+  max-width: 100%;
   flex: 1;
   background-color: #f8f0ff;
   display: grid;
   justify-items: center;
+  grid-template-rows: max-content minmax(300px,auto);
   grid-template-areas:
     "title socials"
     "image socials";
@@ -114,7 +126,10 @@
   min-width: 50px;
   max-width: 50px;
   min-height: 50px;
-  max-height: 50px;
+
+  > img {
+    max-width: 50px;
+  }
 }
 
 .projectSocials:hover:not(span) {
@@ -186,9 +201,7 @@
 
 .projectImage {
   max-width: calc(100% - 2ch);
-  max-height: min(300px, 90vh);
- /* max-height: min(300px, 90vh);*/
-  max-height: max(50vh,300px);
+  max-height: 400px;
 }
 
 .projectImage:hover {
@@ -211,3 +224,4 @@
   font-weight: 400;
   font-size: small;
 }
+

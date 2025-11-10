@@ -1,5 +1,10 @@
 import styles from "../styles/Projects.module.css";
 import Navbar from "./Navbar";
+import AuthorNavbar from "./AuthorNavbar";
+
+import Signup from "./Signup";
+import Login from "./Login";
+
 import { useState, useEffect, Suspense } from "react";
 import { Outlet } from "react-router";
 import { CS_API_URL, useAuthorizeToken } from "../util/apiUtils";
@@ -26,6 +31,7 @@ function App() {
 
   const {
     isAuthorized,
+    setIsAuthorized,
     error: authError,
     loading: authLoading,
   } = useAuthorizeToken();
@@ -52,7 +58,7 @@ function App() {
 
   return (
     <>
-      <Navbar props={navProps} />
+      {isAuthorized ? <AuthorNavbar setIsAuthorized={setIsAuthorized} /> : <Navbar props={navProps} />}
       <main className={styles.main}>
         <Outlet context={{ client: CS_CLIENT }} />
         {signupFormShown && (
@@ -71,6 +77,7 @@ function App() {
             userDetails={userDetails}
             setUserDetails={setUserDetails}
             setDetails={setAuthDetails}
+            setIsAuthorized={setIsAuthorized}
             api={CS_API_URL}
             loginFormShown={loginFormShown}
             setLoginFormShown={setLoginFormShown}
