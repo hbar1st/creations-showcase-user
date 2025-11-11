@@ -1,17 +1,14 @@
 .main {
-  margin-top: max(8vh,10vh);
+  margin-top: max(8vh, 10vh);
   display: grid;
+  row-gap: 1rem;
   grid-template-areas:
     "header"
     "projects";
   justify-items: center;
 
-  & * {    
+  & * {
     box-sizing: border-box;
-  }
-
-  & *:not(dialog) {
-    margin: 0;
   }
 
   h1 {
@@ -20,13 +17,13 @@
 }
 
 .projectsSection {
+  padding: 1rem;
   min-width: 300px;
   grid-area: projects;
   display: flex;
   flex-flow: wrap;
   column-gap: 2em;
   row-gap: 2em;
-  padding: 2ch;
   justify-content: center;
   background: linear-gradient(45deg, #5585f6, transparent);
   max-width: 100%;
@@ -37,6 +34,7 @@
 }
 */
 .projectCard {
+
   flex: 1 0 auto;
   box-shadow: 1px 1px 1px 1px gray;
   border-radius: 5px;
@@ -60,34 +58,42 @@
 }
 
 .projectCardRight {
-  min-width: clamp(300px,50%,calc(100dvw - 12ch));
+  max-height: 400px;
+  min-width: clamp(300px, 50%, calc(100dvw - 12ch));
   max-width: 100%;
   align-self: stretch;
   padding: 2ch;
   flex: 1;
-  row-gap: 1ch;
   background-color: #f8f0ff;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   font-weight: 600;
+      display: grid;
+    grid-template-rows: 10% 20% 10% 60%;
 
-  > * {
-    padding: .1ch 1ch;
+   *:not(form) {
+    padding: 0.1ch 1ch;
     background-color: white;
     margin: 0;
     text-align: left;
     align-self: stretch;
   }
+
+  form {
+    width: 100%;
+
+    & button:hover {
+      background-color: #a85eea5c;
+    }
+  }
 }
 .projectCardLeft {
-  min-width: clamp(300px,50%,calc(100dvw - 12ch));
+  max-height: 400px;
+  min-width: clamp(300px, 50%, calc(100dvw - 12ch));
   max-width: 100%;
   flex: 1;
   background-color: #f8f0ff;
   display: grid;
   justify-items: center;
-  grid-template-rows: max-content minmax(300px,auto);
+  grid-template-rows: 4rem minmax(300px, auto);
   grid-template-areas:
     "title socials"
     "image socials";
@@ -111,12 +117,12 @@
     grid-area: socials;
     display: flex;
     flex-direction: column;
-    row-gap: 2ch;
+    row-gap: 1ch;
     justify-content: center;
     align-items: center;
     font-size: 10px;
     width: 60px;
-    aspect-ratio: 1;    
+    aspect-ratio: 1;
     align-self: stretch;
     background-color: #eadbff;
   }
@@ -138,16 +144,19 @@
   min-width: 50px;
   max-width: 50px;
   min-height: 50px;
-      justify-content: center;
-    padding: 1.5ch;
-    border-radius: 50%;
-    background-color: #2f13130a;
+  justify-content: center;
+  padding: 1.5ch;
+  border-radius: 50%;
 
   > img {
     max-width: 50px;
   }
 }
 
+a.projectSocials,
+button.projectSocials {
+  background-color: #d58fe24f;
+}
 .projectSocials:hover:not(span) {
   transform: scale(101%);
   padding: 1ch;
@@ -217,7 +226,7 @@
 
 .projectImage {
   max-width: calc(100% - 2ch);
-  max-height: 400px;
+  max-height: 290px;
 }
 
 .projectImage:hover {
@@ -227,13 +236,29 @@
   box-shadow: 1px 1px 1px 1px gray;
 }
 
-.comments {    
-    box-sizing: border-box;
-    height: 4ch;
-    width: 100%;
-    text-align: center;
-    padding-top: 1ch;
-    background-color: #e8ecfd;
+.comments {
+  resize: none;
+  box-sizing: border-box;
+  height: fit-content;
+  width: 100%;
+  text-align: center;
+  padding-top: 1ch;
+  background-color: #e8ecfd;
+}
+
+.currentComment {
+  background-color: #fffae9;
+  margin: 1rem 0rem;
+  border: 1px solid #564f4f;
+  resize: vertical;
+  height: fit-content;
+}
+.currentComment:focus {
+  text-align: left;
+  padding: 1ch;
+}
+.currentComment:not(:focus) {
+  height: 4ch;
 }
 
 .descr {
@@ -241,3 +266,50 @@
   font-size: small;
 }
 
+.commentsArea {
+  overflow-y: scroll;
+}
+.commentArea {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto;
+  row-gap: 0;
+
+  > textarea {
+    margin-bottom: 0
+  }
+
+  > .currentComment {
+    grid-column: 1 / -1;
+    grid-row: 1 / 2;
+    z-index: 1;
+    border-bottom: none;
+    margin-bottom: 0;
+    outline: none;
+    border: none;
+  }
+
+  > .buttonPanel {
+    border: none;
+    background-color: white;
+    grid-column: 1 / -1;
+    grid-row: 2 / 3;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    z-index: -1;
+    height: 2rem;
+    outline: none;
+
+    > button {
+      border: none;
+      outline: none;
+      background-color: white;
+      background: none;
+      padding: 4px;
+      margin: 1rem;
+      font-size: small;
+    }
+  }
+}

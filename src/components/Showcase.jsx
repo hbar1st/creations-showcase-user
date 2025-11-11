@@ -97,11 +97,11 @@ export default function Projects() {
                     <p>Description:</p>
                     <p className={styles.descr}>{project.descr}</p>
                   </div>
-                  <p>
+                  <label htmlFor="comment">
                     {project.comments.length > 0
                       ? "Comments"
                       : "No Responses Yet"}
-                  </p>
+                  </label>
                   <Comments project={project} isAuthorized={isAuthorized} />
                 </div>
               </div>
