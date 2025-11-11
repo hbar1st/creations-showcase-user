@@ -1,11 +1,13 @@
 import { useRef, useState, useActionState } from "react";
 import styles from "../styles/Projects.module.css";
 
-export default function CommentArea({ comment, isAuthorized }) {
+export default function CommentArea({ projectId, comment, isAuthorized, handleDeleteBtn }) {
   
   const [commentContent, setCommentContent] = useState(comment); 
   const textAreaRef = useRef(null);
-  const buttonPanelRef = useRef(null)
+  const buttonPanelRef = useRef(null);
+  const saveBtnRef = useRef(null);
+  const deleteBtnRef = useRef(null);
 
   function handleCommentChange(e) {
     e.preventDefault();
@@ -14,8 +16,17 @@ export default function CommentArea({ comment, isAuthorized }) {
       //change the way this textarea looks since it is blank. Make the border red? Invalidate it? Or disable buttons?
     }
     */
-
-    setCommentContent(e.target.value); 
+    if (comment === "") {
+      // we don't need a delete button if the original comment value was blank anyway
+      deleteBtnRef.current.setAttribute("disabled", true) 
+    }
+    if (e.target.value.trim() !== comment) { //compare against the original comment before edits
+      saveBtnRef.current.removeAttribute('disabled');
+    } else {
+      saveBtnRef.current.setAttribute("disabled", true);
+    }
+      setCommentContent(e.target.value);
+    
   }
 
   function handleAreaClick(e) {
@@ -30,6 +41,8 @@ export default function CommentArea({ comment, isAuthorized }) {
       }
     }
   }
+  
+  
   return (
     <div className={styles.commentArea}>
       <textarea
@@ -43,7 +56,9 @@ export default function CommentArea({ comment, isAuthorized }) {
         value={commentContent}
         maxLength={400}
       ></textarea>
-      <div ref={buttonPanelRef}  className={styles.buttonPanel}><button type="submit">delete</button><button type="submit">post</button></div>
+      <div ref={buttonPanelRef} className={styles.buttonPanel}>
+        <button disabled={comment===""} data_pid={projectId} ref={deleteBtnRef}  onClick={handleDeleteBtn} type="submit">delete</button>
+        <button data_pid={projectId} ref={saveBtnRef}  disabled type="submit">save</button></div>
     </div>
   );
 }

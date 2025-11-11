@@ -13,14 +13,17 @@ const routes = [
       {
         index: true,
         element: <LandingPage />,
+        errorElement: <ErrorPage />,
       },
       {
         path: "showcase",
         element: <Showcase />,
+        errorElement: <ErrorPage />,
       },
       {
         path: "account",
         element: <Account />,
+        errorElement: <ErrorPage />,
       },
       {
         path: "/login",

@@ -1,14 +1,17 @@
 import { callAPI, useGetAPI } from "../util/apiUtils";
 import { useNavigate, Link, useOutletContext } from "react-router";
+import { useTransition } from "react";
+
 import ProjectCardLeft from "./ProjectCardLeft";
 import Comments from "./Comments";
 
-import { CS_API_URL, useAuthorizeToken } from "../util/apiUtils";
 import styles from "../styles/Projects.module.css";
 
 export default function Projects() {
   const { authObj } = useOutletContext();
   const { isAuthorized, authError, authLoading } = authObj;
+
+  const [isPending, startTransition] = useTransition();
 
   let {
     data: projects,
@@ -49,13 +52,52 @@ export default function Projects() {
         }
       } catch (error) {
         console.log(error, error.stack);
-        throw new Error(error.message);
+        navigate("/error", {
+          state: null,
+          viewTransition: true,
+        });
       }
     }
 
     updateLikes();
   }
 
+   
+  function handleDeleteBtn(e) {
+    e.preventDefault();
+    const projectId = e.target.getAttribute('data_pid');
+    startTransition(async function () {
+
+      try {
+        const res = await callAPI("DELETE", `/projects/${projectId}/comment`);
+        
+        if (res && res.statusCode === 401) {
+          navigate(res.navigate, { state: location.pathname, viewTransition: true })
+        }
+        
+        if (res && res.statusCode !== 400) {
+          console.log(
+            "result came back ok for account delete: ",
+            res
+          );
+          navigate("/showcase", { state: null, viewTransition: true });
+        } else {
+          // show these errors somewhere
+          console.log(
+            "result came back with errors? for account delete: ",
+            res
+          );
+          //setValidationDetails(res.details);
+        }
+      } catch (error) {
+        console.log(error, error.stack);
+        throw new Error(error.message);
+      } finally {
+        //setProgressShown(false);
+      }
+    });
+  }
+  
   if (projectsLoading || authLoading) {
     return <p>Loading...</p>;
   }
@@ -87,7 +129,7 @@ export default function Projects() {
               >
                 <ProjectCardLeft
                   project={project}
-                  key={isAuthorized}
+                  key={`${isAuthorized} ${project.id}`}
                   isAuthorized={isAuthorized}
                   handleLikeButton={handleLikeButton}
                 />
@@ -102,7 +144,13 @@ export default function Projects() {
                       ? "Comments"
                       : "No Responses Yet"}
                   </label>
-                  <Comments project={project} isAuthorized={isAuthorized} />
+                  <Comments
+                    key={project.id}
+                    project={project}
+                    isAuthorized={isAuthorized}
+                    handleDeleteBtn={handleDeleteBtn}
+                    isPending={isPending}
+                  />
                 </div>
               </div>
             );

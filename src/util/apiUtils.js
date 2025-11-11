@@ -145,15 +145,19 @@ export function useGetAPI(route) {
           headers: getHeader(getToken()),
           signal: controller.signal,
         });
-
         if (res.ok) {
           const data = await res.json();
+          
+        setLoading(false);
           console.log("this is the data the loader should show: ", data);
           setData(data);
         } else {
-          throw new Error(
-            "Internal error. Failed to contact the server. Contact support if the issue persists."
-          );
+
+        setError(error);
+        navigate("/error", {
+          state: error,
+          viewTransition: true,
+        });
         }
       } catch (error) {
         if (error.name === "AbortError") {
@@ -161,27 +165,20 @@ export function useGetAPI(route) {
           return;
         }
         console.log(error, error.stack);
-        throw new Error(
-          "Internal error. Failed to complete the request. Contact support if the issue persists"
-        );
-      }
-    }
-    if (route) {
-      try {
-        callAPI();
-      } catch (error) {
+
         setError(error);
         navigate("/error", {
           state: error,
           viewTransition: true,
         });
-      } finally {
-        setLoading(false);
       }
+    }
+    if (route) {
+        callAPI();
     }
 
     return () => controller.abort(); //clean up if needed
-  }, [location.pathname, navigate, route]);
+  }, [error, location.pathname, navigate, route]);
 
   return { data, setData, error, loading };
 }
