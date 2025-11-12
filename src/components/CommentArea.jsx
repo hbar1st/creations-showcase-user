@@ -1,34 +1,36 @@
-import { useRef, useState, useActionState } from "react";
+import { useRef, useState } from "react";
 import styles from "../styles/Projects.module.css";
 
-export default function CommentArea({ projectId, comment, isAuthorized, handleDeleteBtn }) {
+export default function CommentArea({ projectId, comment, handleDeleteBtn, handleSaveBtn }) {
   
-  const [commentContent, setCommentContent] = useState(comment); 
+  const [commentContent, setCommentContent] = useState(comment.content); 
+  const [isSaveEnabled, setIsSaveEnabled] = useState(false);
+  const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
+  
   const textAreaRef = useRef(null);
   const buttonPanelRef = useRef(null);
   const saveBtnRef = useRef(null);
   const deleteBtnRef = useRef(null);
-
+  
   function handleCommentChange(e) {
     e.preventDefault();
-    /*
-    if (e.target.value.trim() === "") {
-      //change the way this textarea looks since it is blank. Make the border red? Invalidate it? Or disable buttons?
+
+    // you cannot delete a comment if it doesn't exist yet (has never been saved) 
+    if (comment.id === null) {
+      setIsDeleteDisabled(true);
+
     }
-    */
-    if (comment === "") {
-      // we don't need a delete button if the original comment value was blank anyway
-      deleteBtnRef.current.setAttribute("disabled", true) 
-    }
-    if (e.target.value.trim() !== comment) { //compare against the original comment before edits
+    if (e.target.value.trim() !== commentContent) { //compare against the original comment before edits
       saveBtnRef.current.removeAttribute('disabled');
+      setIsSaveEnabled(true);
     } else {
       saveBtnRef.current.setAttribute("disabled", true);
+      setIsSaveEnabled(false);
     }
-      setCommentContent(e.target.value);
+    setCommentContent(e.target.value);
     
   }
-
+  
   function handleAreaClick(e) {
     e.preventDefault(e);
     if (textAreaRef) {
@@ -42,23 +44,29 @@ export default function CommentArea({ projectId, comment, isAuthorized, handleDe
     }
   }
   
-  
+  function handleSaveBtnLocal(e) {
+    e.preventDefault();
+    if (textAreaRef) {
+      textAreaRef.current.style.height = "4ch";
+    }
+    handleSaveBtn(e)
+  }
   return (
     <div className={styles.commentArea}>
-      <textarea
-        ref={textAreaRef}
-        name="comment"
-        onClick={handleAreaClick}
-        onChange={handleCommentChange}
-        className={`${styles.comments} ${styles.currentComment}`}
-        placeholder={commentContent ? "" : "what are your thoughts?"}
-        id="comment"
-        value={commentContent}
-        maxLength={400}
-      ></textarea>
-      <div ref={buttonPanelRef} className={styles.buttonPanel}>
-        <button disabled={comment===""} data_pid={projectId} ref={deleteBtnRef}  onClick={handleDeleteBtn} type="submit">delete</button>
-        <button data_pid={projectId} ref={saveBtnRef}  disabled type="submit">save</button></div>
+    <textarea
+    ref={textAreaRef}
+    name="comment"
+    onClick={handleAreaClick}
+    onChange={handleCommentChange}
+    className={`${styles.comments} ${styles.currentComment}`}
+    placeholder={commentContent ? "" : "what are your thoughts?"}
+    id="comment"
+    value={commentContent}
+    maxLength={400}
+    ></textarea>
+    <div ref={buttonPanelRef} className={styles.buttonPanel}>
+    <button disabled={isDeleteDisabled} data_pid={projectId} ref={deleteBtnRef}  onClick={handleDeleteBtn} type="button">delete</button>
+    <button data_pid={projectId} ref={saveBtnRef} disabled={!isSaveEnabled} type="button" onClick={handleSaveBtnLocal}>save</button></div>
     </div>
   );
 }

@@ -28,13 +28,8 @@
   background: linear-gradient(45deg, #5585f6, transparent);
   max-width: 100%;
 }
-/*
-.projectCard:hover {
-  background-color: #a85eeabf;
-}
-*/
-.projectCard {
 
+.projectCard {
   flex: 1 0 auto;
   box-shadow: 1px 1px 1px 1px gray;
   border-radius: 5px;
@@ -57,7 +52,7 @@
   }
 }
 
-.projectCardRight {    
+.projectCardRight {
   min-height: 300px;
   max-height: 389px;
   min-width: clamp(300px, 50%, calc(100dvw - 12ch));
@@ -67,10 +62,10 @@
   flex: 1;
   background-color: #f8f0ff;
   font-weight: 600;
-      display: grid;
-    grid-template-rows: auto 20% auto 60%;
+  display: grid;
+  grid-template-rows: auto 20% auto 60%;
 
-   *:not(form) {
+  *:not(form) {
     padding: 0.1ch 1ch;
     background-color: white;
     margin: 0;
@@ -83,10 +78,29 @@
     font-style: oblique;
   }
 
+  > p:first-of-type {
+    color: #3b2750;
+    font-family: sans-serif;
+    font-size: large;
+    font-variant: all-petite-caps;
+    font-stretch: extra-expanded;
+    text-shadow: 1px 1px 2px #65617aba;
+    text-align: center;
+    text-decoration: solid;
+    text-emphasis-position: under;
+    text-emphasis-style: filled;
+    text-emphasis-color: #c488ff;
+  }
+
+  > div:first-of-type > p:first-of-type {
+    padding: 0;
+    font-stretch: expanded;
+    font-style: oblique;
+  }
   form {
     width: 100%;
 
-    & button:hover {
+    & button:hover:not(:disabled) {
       background-color: #a85eea5c;
     }
   }
@@ -250,6 +264,10 @@ button.projectSocials {
   text-align: center;
   padding-top: 1ch;
   background-color: #e8ecfd;
+  border-top: 0;
+  border-bottom: 0;
+  border-right: 0;
+  border-left: 2px dashed black;
 }
 
 .currentComment {
@@ -265,6 +283,7 @@ button.projectSocials {
 }
 .currentComment:not(:focus) {
   height: 4ch;
+  color: rgba(0, 0, 0, 0.512)
 }
 
 .descr {
@@ -274,16 +293,22 @@ button.projectSocials {
 
 .commentsArea {
   overflow-y: scroll;
+  max-height: 200px;
+
+  > label {
+        font-style: normal;
+    text-decoration: dashed;
+  }
 }
 .commentArea {
   display: grid;
   grid-template-columns: auto;
   grid-template-rows: auto auto;
   row-gap: 0;
-  border: .5px solid black;
+  border: 0.5px solid black;
 
   > textarea {
-    margin-bottom: 0
+    margin-bottom: 0;
   }
 
   > .currentComment {
@@ -309,7 +334,7 @@ button.projectSocials {
     outline: none;
     z-index: 2;
 
-    > button {            
+    > button {
       border: 1px solid #0000ff66;
       min-width: 3rem;
       text-align: center;

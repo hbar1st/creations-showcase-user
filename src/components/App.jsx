@@ -1,6 +1,8 @@
 import styles from "../styles/Projects.module.css";
 import Navbar from "./Navbar";
+import AuthError from "./AuthError";
 import AuthorNavbar from "./AuthorNavbar";
+import ValidationErrors from "./ValidationErrors";
 
 import Signup from "./Signup";
 import Login from "./Login";
@@ -58,9 +60,18 @@ function App() {
 
   return (
     <>
-      {isAuthorized ? <AuthorNavbar setIsAuthorized={setIsAuthorized} /> : <Navbar props={navProps} />}
+      {isAuthorized ? (
+        <AuthorNavbar setIsAuthorized={setIsAuthorized} />
+      ) : (
+        <Navbar props={navProps} />
+      )}
       <main className={styles.main}>
-        <Outlet context={{ client: CS_CLIENT, authObj: {isAuthorized,authError,authLoading} }} />
+        <Outlet
+          context={{
+            client: CS_CLIENT,
+            authObj: { isAuthorized, setIsAuthorized, authError, authLoading },
+          }}
+        />
         {signupFormShown && (
           <Signup
             userDetails={userDetails}
@@ -89,6 +100,9 @@ function App() {
             setDetails={setValidationDetails}
             action="sign-up"
           />
+        )}
+        {authDetails && (
+          <AuthError details={authDetails} setDetails={setAuthDetails} />
         )}
       </main>
     </>
