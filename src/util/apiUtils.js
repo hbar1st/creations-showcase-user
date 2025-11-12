@@ -68,20 +68,21 @@ export async function callAPI(action = "GET", route, formData = null) {
   }
 }
 
-
 export function useAuthorizeToken() {
   const [isAuthorized, setIsAuthorized] = useState(false); // this is either false or the userid value
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let ignore = false;
     (async () => {
       if (getToken()) {
         try {
           setLoading(true);
           const result = await verifyToken();
-
-          setIsAuthorized(result);
+          if (!ignore) {
+            setIsAuthorized(result);
+          }
         } catch (error) {
           console.log(
             "caught an error from calling verifyToken inside of useAuthorizeToken"
@@ -95,6 +96,9 @@ export function useAuthorizeToken() {
         setIsAuthorized(false);
       }
     })();
+    return () => {
+      ignore = true;
+    };
   }, []);
   return { isAuthorized, setIsAuthorized, error, loading };
 }
@@ -113,7 +117,7 @@ export const verifyToken = async () => {
         console.log("about to clear the token in apiUtils");
         clearToken();
         return false;
-      } else if (res.ok) {        
+      } else if (res.ok) {
         const data = await res.json();
         return data.userid;
       }
@@ -136,6 +140,7 @@ export function useGetAPI(route) {
   const location = useLocation();
 
   useEffect(() => {
+    let ignore = false;
     const controller = new AbortController();
     async function callAPI() {
       try {
@@ -147,17 +152,18 @@ export function useGetAPI(route) {
         });
         if (res.ok) {
           const data = await res.json();
-          
-        setLoading(false);
-          console.log("this is the data the loader should show: ", data);
-          setData(data);
-        } else {
 
-        setError(error);
-        navigate("/error", {
-          state: error,
-          viewTransition: true,
-        });
+          if (!ignore) {
+            setLoading(false);
+            console.log("this is the data the loader should show: ", data);
+            setData(data);
+          }
+        } else {
+          setError(error);
+          navigate("/error", {
+            state: error,
+            viewTransition: true,
+          });
         }
       } catch (error) {
         if (error.name === "AbortError") {
@@ -174,10 +180,12 @@ export function useGetAPI(route) {
       }
     }
     if (route) {
-        callAPI();
+      callAPI();
     }
-
-    return () => controller.abort(); //clean up if needed
+    return () => {
+      ignore = true;
+      controller.abort();
+    };
   }, [error, location.pathname, navigate, route]);
 
   return { data, setData, error, loading };

@@ -2,6 +2,7 @@ import { callAPI, useGetAPI } from "../util/apiUtils";
 import { useNavigate, Link, useOutletContext } from "react-router";
 import { useState, useRef, useEffect } from "react";
 import { useTransition } from "react";
+import ValidationErrors from "./ValidationErrors";
 
 import ProjectCardLeft from "./ProjectCardLeft";
 import Comments from "./Comments";
@@ -213,43 +214,47 @@ export default function Projects() {
           </header>
           <progress value={null} />
         </dialog>
-        <section className={styles.projectsSection}>
-          {projects.result.map((project) => {
-            return (
-              <div
-                key={project.id}
-                data_id={project.id}
-                className={styles.projectCard}
-              >
-                <ProjectCardLeft
-                  project={project}
-                  key={`${isAuthorized} ${project.id}`}
-                  isAuthorized={isAuthorized}
-                  handleLikeButton={handleLikeButton}
-                />
-                <div className={styles.projectCardRight}>
-                  <p>Authored by {project.author.user.nickname}</p>
-                  <div>
-                    <p>Description:</p>
-                    <p className={styles.descr}>{project.descr}</p>
-                  </div>
-                  <label htmlFor="comment">
-                    {project.comments.length > 0
-                      ? "Comments"
-                      : "No Responses Yet"}
-                  </label>
-                  <Comments
+        {(projects.result.length > 0)
+          ? <section className={styles.projectsSection}>
+            {projects.result.map((project) => {
+              return (
+                <div
+                  key={project.id}
+                  data_id={project.id}
+                  className={styles.projectCard}
+                >
+                  <ProjectCardLeft
                     project={project}
+                    key={`${isAuthorized} ${project.id}`}
                     isAuthorized={isAuthorized}
-                    handleDeleteBtn={handleDeleteBtn}
-                    handleSaveBtn={handleSaveBtn}
-                    isPending={isPending}
+                    handleLikeButton={handleLikeButton}
                   />
+                  <div className={styles.projectCardRight}>
+                    <p>Authored by {project.author.user.nickname}</p>
+                    <div>
+                      <p>Description:</p>
+                      <p className={styles.descr}>{project.descr}</p>
+                    </div>
+                    <label htmlFor="comment">
+                      {project.comments.length > 0
+                        ? "Comments"
+                        : "No Responses Yet"}
+                    </label>
+                    <Comments
+                      project={project}
+                      isAuthorized={isAuthorized}
+                      handleDeleteBtn={handleDeleteBtn}
+                      handleSaveBtn={handleSaveBtn}
+                      isPending={isPending}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </section>
+              );
+            })}
+          </section>
+          :
+          <p>Nothing to see yet. People need to post their creations.</p>
+        }
       </>
     );
   }

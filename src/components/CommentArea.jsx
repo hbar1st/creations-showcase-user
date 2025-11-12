@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import styles from "../styles/Projects.module.css";
 
 export default function CommentArea({ projectId, comment, handleDeleteBtn, handleSaveBtn }) {
@@ -6,11 +6,19 @@ export default function CommentArea({ projectId, comment, handleDeleteBtn, handl
   const [commentContent, setCommentContent] = useState(comment.content); 
   const [isSaveEnabled, setIsSaveEnabled] = useState(false);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
-  
+  const [saving, setSaving] = useState(false);
+
   const textAreaRef = useRef(null);
   const buttonPanelRef = useRef(null);
   const saveBtnRef = useRef(null);
   const deleteBtnRef = useRef(null);
+
+  useEffect(() => {
+    if (saving) {
+      saveBtnRef.current.innerText = "Save"
+      setSaving(false);
+    }
+  }, [commentContent, saving])
   
   function handleCommentChange(e) {
     e.preventDefault();
@@ -20,7 +28,7 @@ export default function CommentArea({ projectId, comment, handleDeleteBtn, handl
       setIsDeleteDisabled(true);
 
     }
-    if (e.target.value.trim() !== commentContent) { //compare against the original comment before edits
+    if (e.target.value.trim() !== commentContent.content) { //compare against the original comment before edits
       saveBtnRef.current.removeAttribute('disabled');
       setIsSaveEnabled(true);
     } else {
@@ -49,6 +57,10 @@ export default function CommentArea({ projectId, comment, handleDeleteBtn, handl
     if (textAreaRef) {
       textAreaRef.current.style.height = "4ch";
     }
+    if (saveBtnRef && !saving) {
+      setSaving(true);
+      saveBtnRef.current.innerText = "Saving"
+    }
     handleSaveBtn(e)
   }
   return (
@@ -59,13 +71,13 @@ export default function CommentArea({ projectId, comment, handleDeleteBtn, handl
     onClick={handleAreaClick}
     onChange={handleCommentChange}
     className={`${styles.comments} ${styles.currentComment}`}
-    placeholder={commentContent ? "" : "what are your thoughts?"}
+    placeholder={commentContent.content ? "" : "what are your thoughts?"}
     id="comment"
-    value={commentContent}
+    value={commentContent.content}
     maxLength={400}
     ></textarea>
     <div ref={buttonPanelRef} className={styles.buttonPanel}>
-    <button disabled={isDeleteDisabled} data_pid={projectId} ref={deleteBtnRef}  onClick={handleDeleteBtn} type="button">delete</button>
+    <button disabled={isDeleteDisabled || comment.id === null} data_pid={projectId} ref={deleteBtnRef}  onClick={handleDeleteBtn} type="button">delete</button>
     <button data_pid={projectId} ref={saveBtnRef} disabled={!isSaveEnabled} type="button" onClick={handleSaveBtnLocal}>save</button></div>
     </div>
   );

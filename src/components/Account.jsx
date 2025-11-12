@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router";
-import ValidationErrors from "./ValidationErrors.jsx";
+import ValidationErrors from "./ValidationErrors";
 import styles from "../styles/Account.module.css";
 import { useGetAPI, callAPI } from "../util/apiUtils";
 

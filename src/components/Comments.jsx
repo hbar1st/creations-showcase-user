@@ -19,7 +19,7 @@ export default function Comments({
           <form>
             <CommentArea
               projectId={project.id}
-            comment={{ id: null, content: "" }}
+              comment={{ id: null, content: "" }}
               handleDeleteBtn={handleDeleteBtn}
               handleSaveBtn={handleSaveBtn}
             />
@@ -47,7 +47,7 @@ export default function Comments({
                   disabled
                   className={styles.comments}
                   name="comment"
-                  value={comment}
+                  value={comment.content}
                 ></textarea>
               )}
             </label>
