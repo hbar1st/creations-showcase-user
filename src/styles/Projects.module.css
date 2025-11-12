@@ -1,5 +1,5 @@
 .main {
-  margin-top: max(8vh, 10vh);
+  margin-top: 9vh;
   display: grid;
   row-gap: 1rem;
   grid-template-areas:
@@ -92,6 +92,9 @@
     text-emphasis-color: #c488ff;
   }
 
+  > div:first-of-type {
+    overflow-y: scroll;
+  }
   > div:first-of-type > p:first-of-type {
     padding: 0;
     font-stretch: expanded;
@@ -283,7 +286,7 @@ button.projectSocials {
 }
 .currentComment:not(:focus) {
   height: 4ch;
-  color: rgba(0, 0, 0, 0.512)
+  color: rgba(0, 0, 0, 0.512);
 }
 
 .descr {
@@ -296,7 +299,7 @@ button.projectSocials {
   max-height: 200px;
 
   > label {
-        font-style: normal;
+    font-style: normal;
     text-decoration: dashed;
   }
 }
@@ -345,5 +348,14 @@ button.projectSocials {
       margin: 0rem 1rem 0rem 0rem;
       font-size: small;
     }
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .main {
+    margin-top: 10vh;
+  }
+  .projectCardRight {
+    max-height: 450px;
   }
 }
