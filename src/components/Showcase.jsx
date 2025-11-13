@@ -28,14 +28,14 @@ export default function Projects() {
 
   const navigate = useNavigate();
 
-    useEffect(() => {
-      if (!progressShown && progressRef) {
-        progressRef.current?.close();
-      } else {
-        progressRef.current?.showModal();
-      }
-    }, [progressShown]);
-  
+  useEffect(() => {
+    if (!progressShown && progressRef) {
+      progressRef.current?.close();
+    } else {
+      progressRef.current?.showModal();
+    }
+  }, [progressShown]);
+
   function handleLikeButton(e, { liked }) {
     const pid = e.currentTarget.getAttribute("data-pid");
     console.log("You are: ", e.currentTarget.getAttribute("data-userid"));
@@ -77,20 +77,18 @@ export default function Projects() {
     updateLikes();
   }
 
-   
   function handleDeleteBtn(e) {
     e.preventDefault();
-    const projectId = e.target.getAttribute('data_pid');
+    const projectId = e.target.getAttribute("data_pid");
     startTransition(async function () {
-
       try {
         setProgressShown(true);
         const res = await callAPI("DELETE", `/projects/${projectId}/comment`);
-        
+
         if (res && res.statusCode === 401) {
           setIsAuthorized(false);
         }
-        
+
         if (res && res.statusCode !== 400) {
           console.log("result came back ok for comment delete: ", res);
           // set the state to make it refresh
@@ -102,7 +100,7 @@ export default function Projects() {
                 if (
                   Number(project.comments[i].userId) === Number(isAuthorized)
                 ) {
-                  delete project.comments[i]
+                  delete project.comments[i];
                 }
               }
             }
@@ -128,59 +126,74 @@ export default function Projects() {
     });
   }
 
-    function handleSaveBtn(e) {
-      e.preventDefault();
-      console.log(e.target.parentNode.parentNode.parentNode)
-      const formData = new FormData(e.target.parentNode.parentNode.parentNode);
+  function handleDescrClick(e) {
+    console.log(e.currentTarget);
+    e.currentTarget.style.maxHeight = "fit-content";
+  }
 
-      const projectId = e.target.getAttribute("data_pid");
-      startTransition(async function () {
-        try {
-          setProgressShown(true);
-          const res = await callAPI("POST", `/projects/${projectId}/comment`, formData);
+  function handleSaveBtn(e) {
+    e.preventDefault();
+    console.log(e.target.parentNode.parentNode.parentNode);
+    const formData = new FormData(e.target.parentNode.parentNode.parentNode);
 
-          if (res && res.statusCode === 401) {
-            setIsAuthorized(false);
-          }
+    const projectId = e.target.getAttribute("data_pid");
+    startTransition(async function () {
+      try {
+        setProgressShown(true);
+        const res = await callAPI(
+          "POST",
+          `/projects/${projectId}/comment`,
+          formData
+        );
 
-          if (res && res.statusCode !== 400) {
-            console.log("result came back ok for saving a comment: ", res);
-            // set the state to make it refresh
-            const newProjects = { ...projects.result };
-            for (const key in newProjects) {
-              const project = newProjects[key];
-              if (project.id === res.result.projectId) {
-                for (let i = 0; i < project.comments.length; i++) {
-                  if (Number(project.comments[i].userId) === Number(isAuthorized)) {
-                    project.comments[i].content = res.result.content;
-                  }
+        if (res && res.statusCode === 401) {
+          setIsAuthorized(false);
+        }
+
+        if (res && res.statusCode !== 400) {
+          console.log("result came back ok for saving a comment: ", res);
+          // set the state to make it refresh
+          const newProjects = { ...projects.result };
+          for (const key in newProjects) {
+            const project = newProjects[key];
+            if (project.id === res.result.projectId) {
+              for (let i = 0; i < project.comments.length; i++) {
+                if (
+                  Number(project.comments[i].userId) === Number(isAuthorized)
+                ) {
+                  project.comments[i].content = res.result.content;
                 }
               }
-             
             }
-            setProjects({ ...projects });
-          } else {
-            // show these errors somewhere
-            console.log(
-              "result came back with errors? for saving a comment: ",
-              res
-            );
-            setValidationDetails(res.details);
           }
-        } catch (error) {
-          console.log(error, error.stack);
-          navigate("/error", {
-            state: null,
-            viewTransition: true,
-          });
-        } finally {
-          setProgressShown(false);
+          setProjects({ ...projects });
+        } else {
+          // show these errors somewhere
+          console.log(
+            "result came back with errors? for saving a comment: ",
+            res
+          );
+          setValidationDetails(res.details);
         }
-      });
-    }
-  
+      } catch (error) {
+        console.log(error, error.stack);
+        navigate("/error", {
+          state: null,
+          viewTransition: true,
+        });
+      } finally {
+        setProgressShown(false);
+      }
+    });
+  }
+
   if (projectsLoading || authLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div>
+        <p>Loading...</p>
+        <p>This process will take a few minutes. Please be patient.</p>
+      </div>
+    );
   }
   if (projectsError) {
     navigate("/error", {
@@ -214,8 +227,8 @@ export default function Projects() {
           </header>
           <progress value={null} />
         </dialog>
-        {(projects.result.length > 0)
-          ? <section className={styles.projectsSection}>
+        {projects.result.length > 0 ? (
+          <section className={styles.projectsSection}>
             {projects.result.map((project) => {
               return (
                 <div
@@ -231,16 +244,17 @@ export default function Projects() {
                   />
                   <div className={styles.projectCardRight}>
                     <p>Authored by {project.author.user.nickname}</p>
-                    <div>
+                    <div onClick={handleDescrClick}>
                       <p>Description:</p>
                       <p className={styles.descr}>{project.descr}</p>
                     </div>
-                    <label htmlFor="comment">
+                    <label htmlFor="comments">
                       {project.comments.length > 0
                         ? "Comments"
                         : "No Responses Yet"}
                     </label>
                     <Comments
+                      id="comments"
                       project={project}
                       isAuthorized={isAuthorized}
                       handleDeleteBtn={handleDeleteBtn}
@@ -252,9 +266,9 @@ export default function Projects() {
               );
             })}
           </section>
-          :
+        ) : (
           <p>Nothing to see yet. People need to post their creations.</p>
-        }
+        )}
       </>
     );
   }

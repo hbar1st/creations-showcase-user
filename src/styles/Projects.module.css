@@ -63,7 +63,7 @@
   background-color: #f8f0ff;
   font-weight: 600;
   display: grid;
-  grid-template-rows: auto 20% auto 60%;
+  grid-template-rows: auto 1fr auto 2fr;
 
   *:not(form) {
     padding: 0.1ch 1ch;
@@ -353,9 +353,14 @@ button.projectSocials {
 
 @media only screen and (max-width: 500px) {
   .main {
-    margin-top: 10vh;
+    margin-top: 11vh;
   }
   .projectCardRight {
     max-height: 450px;
+    grid-template-rows: auto minmax(5rem,auto) auto 1fr;
+
+    > div:first-of-type {
+      max-height: 7rem;
+    }
   }
 }
